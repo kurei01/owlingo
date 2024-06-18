@@ -123,7 +123,8 @@ export const getCourseProgress = cache(async () => {
       return lesson.challenges.some((challenge) => {
         return (
           !challenge.challengeProgress ||
-          challenge.challengeProgress.length === 0
+          challenge.challengeProgress.length === 0 ||
+          challenge.challengeProgress.some((progress) => !progress.completed)
         );
       });
     });
@@ -174,4 +175,31 @@ export const getLesson = cache(async (id?: number) => {
   });
 
   return { ...data, challenges: normalizedChallenges };
+});
+
+export const getLessonPercentage = cache(async (id?: number) => {
+
+  const courseProgress = await getCourseProgress();
+
+  const lessonId = id || courseProgress?.activeLessonId;
+
+  if (!lessonId) {
+    return 0;
+  }
+
+  const lesson = await getLesson(id);
+
+  if (!lesson) {
+    return 0;
+  }
+
+  const completedChallenges = lesson.challenges.filter(
+    (challenge) => challenge.completed
+  );
+
+  const percentage = Math.round(
+    (completedChallenges.length / lesson.challenges.length) * 100
+  );
+
+  return percentage;
 });
