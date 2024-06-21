@@ -1,11 +1,10 @@
 "use client";
 
-import {
-  challengeOptions,
-  challengeProgress,
-  challenges,
-  userProgress,
-} from "@/db/schema";
+import { useState } from "react";
+
+import { challengeOptions, challengeProgress, challenges } from "@/db/schema";
+
+import { Header } from "./header";
 
 type Props = {
   initialLessonId: number;
@@ -26,5 +25,21 @@ export const Quiz = ({
   initialPercentage,
   userSubscription,
 }: Props) => {
-  return <div> Quiz</div>;
+  const [hearts, setHearts] = useState(initialHearts);
+  const [percentage, setPercentage] = useState(initialPercentage);
+
+  return (
+    <>
+      <Header
+        hearts={hearts}
+        percentage={percentage}
+        hasActiveSubscription={!!userSubscription?.isActive}
+      />
+      <div className="flex-1">
+        <div className="h-full flex items-center justify-center">
+          <div className="lg:min-h-[350px] lg:w-[600px] w-full px-6 lg:px-0 flex flex-col gap-y-12"></div>
+        </div>
+      </div>
+    </>
+  );
 };
